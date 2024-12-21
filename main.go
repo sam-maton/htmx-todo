@@ -9,16 +9,12 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	// mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-	// 	http.Redirect(w, r, "/", http.StatusMovedPermanently)
-	// })
-
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "index.html")
 	})
 
 	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "login.html")
+		http.ServeFile(w, r, "./pages/login.html")
 	})
 
 	log.Println("Serving app on http://localhost:4321/")
