@@ -11,6 +11,9 @@ func main() {
 
 	mux := http.NewServeMux()
 
+	styles := http.FileServer(http.Dir("./views/stylesheets"))
+	mux.Handle("/styles/", http.StripPrefix("/styles/", styles))
+
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		tmpl, err := template.New("").ParseFiles("index.html", "./views/layouts/main-layout.html")
 		if err != nil {
