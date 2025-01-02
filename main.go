@@ -15,36 +15,28 @@ func main() {
 	mux.Handle("/styles/", http.StripPrefix("/styles/", styles))
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		tmpl, err := template.New("").ParseFiles("index.html", "./views/layouts/main-layout.html")
-		if err != nil {
-			fmt.Println(err)
+		if r.URL.Path != "/" {
+			http.NotFound(w, r)
+			return
 		}
 
-		err = tmpl.ExecuteTemplate(w, "main-layout", nil)
+		err := applyMainLayout(w, r, "index.html")
 		if err != nil {
 			fmt.Println(err)
 		}
 	})
 
 	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-		tmpl, err := template.New("").ParseFiles("./views/pages/login.html", "./views/layouts/main-layout.html")
-		if err != nil {
-			fmt.Println(err)
-		}
 
-		err = tmpl.ExecuteTemplate(w, "main-layout", nil)
+		err := applyMainLayout(w, r, "./views/pages/login.html")
 		if err != nil {
 			fmt.Println(err)
 		}
 	})
 
 	mux.HandleFunc("/signup", func(w http.ResponseWriter, r *http.Request) {
-		tmpl, err := template.New("").ParseFiles("./views/pages/sign-up.html", "./views/layouts/main-layout.html")
-		if err != nil {
-			fmt.Println(err)
-		}
 
-		err = tmpl.ExecuteTemplate(w, "main-layout", nil)
+		err := applyMainLayout(w, r, "./views/pages/sign-up.html")
 		if err != nil {
 			fmt.Println(err)
 		}
