@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -74,7 +76,7 @@ func main() {
 		view.Execute(w, data)
 	})
 
-	mux.HandleFunc("POST /api/signup", config.signupHandler)
+	mux.HandleFunc("POST /api/users", config.signupHandler)
 
 	log.Println("Serving app on http://localhost:4321/")
 	http.ListenAndServe(":4321", mux)
