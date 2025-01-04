@@ -1,13 +1,25 @@
 {{define "content"}}
+
 <form action="/api/login" method="post">
-  <label for="login-email">Email</label>
-  <input type="email" name="login-email" id="login-email" />
+  <div class="mb-3">
+    <label class="form-label" for="login-email">Email</label>
+    <input
+      class="form-control"
+      type="email"
+      name="login-email"
+      id="login-email"
+    />
+  </div>
 
-  <label for="loging-password">Password</label>
-  <input type="password" name="login-password" id="login-password" />
-
-  <button type="submit">Submit</button>
+  <div class="mb-3">
+    <label class="form-label" for="loging-password">Password</label>
+    <input
+      class="form-control"
+      type="password"
+      name="login-password"
+      id="login-password"
+    />
+  </div>
+  <button class="btn btn-primary" type="submit">Submit</button>
 </form>
-
-<button hx-get="/api/clicked" hx-swap="outerHTML">HTMX test button</button>
 {{end}}

@@ -9,6 +9,7 @@ import (
 
 func main() {
 
+	config := setupServerConfig()
 	mux := http.NewServeMux()
 
 	styles := http.FileServer(http.Dir("./views/stylesheets"))
@@ -72,6 +73,8 @@ func main() {
 
 		view.Execute(w, data)
 	})
+
+	mux.HandleFunc("POST /api/signup", config.signupHandler)
 
 	log.Println("Serving app on http://localhost:4321/")
 	http.ListenAndServe(":4321", mux)
