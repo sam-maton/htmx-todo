@@ -1,25 +1,17 @@
 {{define "content"}}
+<div class="login-page">
+  <h2>Login</h2>
+  <form action="/api/login" method="post">
+    <div class="mb-3">
+      <label class="form-label" for="login-email">Email:</label>
+      <input class="form-control" type="email" name="login-email" id="login-email" />
+    </div>
 
-<form action="/api/login" method="post">
-  <div class="mb-3">
-    <label class="form-label" for="login-email">Email</label>
-    <input
-      class="form-control"
-      type="email"
-      name="login-email"
-      id="login-email"
-    />
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label" for="loging-password">Password</label>
-    <input
-      class="form-control"
-      type="password"
-      name="login-password"
-      id="login-password"
-    />
-  </div>
-  <button class="btn btn-primary" type="submit">Submit</button>
-</form>
+    <div class="mb-3">
+      <label class="form-label" for="loging-password">Password:</label>
+      <input class="form-control" type="password" name="login-password" id="login-password" />
+    </div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+  </form>
+</div>
 {{end}}
