@@ -15,7 +15,10 @@ func (config serverConfig) signupHandler(w http.ResponseWriter, r *http.Request)
 
 	fmt.Println(email, password, confirm)
 
-	// check if passwords match
+	if true {
+		sendErrorToast(w)
+		return
+	}
 
 	hashedPW, _ := auth.HashPassword(password)
 
