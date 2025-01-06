@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/sam-maton/htmx-todo/internal/auth"
@@ -13,19 +13,29 @@ func (config serverConfig) signupHandler(w http.ResponseWriter, r *http.Request)
 	password := r.FormValue("signup-password")
 	confirm := r.FormValue("signup-password-confirm")
 
-	fmt.Println(email, password, confirm)
-
-	if true {
-		sendErrorToast(w)
+	if password != confirm {
+		sendErrorToast(w, "The passwords did not match.")
 		return
 	}
 
-	hashedPW, _ := auth.HashPassword(password)
+	hashedPW, err := auth.HashPassword(password)
+	if err != nil {
+		sendErrorToast(w, "There was an error with the sign up.")
+		log.Println(err)
+		return
+	}
 
 	userParams := database.CreateUserParams{
 		Email:          email,
 		HashedPassword: hashedPW,
 	}
 
-	config.db.CreateUser(r.Context(), userParams)
+	_, err = config.db.CreateUser(r.Context(), userParams)
+	if err != nil {
+		sendErrorToast(w, "There was an error with the sign up.")
+		log.Println(err)
+		return
+	}
+
+	w.Header().Add("Hx-Redirect", "/")
 }

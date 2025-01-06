@@ -24,12 +24,17 @@ func applyMainLayout(w http.ResponseWriter, r *http.Request, content string) err
 	return nil
 }
 
-func sendErrorToast(w http.ResponseWriter) {
+func sendErrorToast(w http.ResponseWriter, message string) {
+
+	type errorParams struct {
+		ErrorMessage string
+	}
+
 	view, err := template.ParseFiles("./views/components/error-toast.html")
 
 	if err != nil {
 		log.Println(err)
 	}
 
-	view.Execute(w, nil)
+	view.Execute(w, errorParams{ErrorMessage: message})
 }
