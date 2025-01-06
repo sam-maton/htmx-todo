@@ -14,16 +14,13 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (id, created_at, updated_at, email, hashed_password)
-VALUES ($1, $2, $3, $4, $5)
+VALUES (gen_random_uuid(), NOW(), NOW(), $1, $2)
 RETURNING id, created_at, updated_at, email
 `
 
 type CreateUserParams struct {
-	ID             uuid.UUID `json:"id"`
-	CreatedAt      time.Time `json:"created_at"`
-	UpdatedAt      time.Time `json:"updated_at"`
-	Email          string    `json:"email"`
-	HashedPassword string    `json:"hashed_password"`
+	Email          string `json:"email"`
+	HashedPassword string `json:"hashed_password"`
 }
 
 type CreateUserRow struct {
@@ -34,13 +31,7 @@ type CreateUserRow struct {
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
-	row := q.db.QueryRowContext(ctx, createUser,
-		arg.ID,
-		arg.CreatedAt,
-		arg.UpdatedAt,
-		arg.Email,
-		arg.HashedPassword,
-	)
+	row := q.db.QueryRowContext(ctx, createUser, arg.Email, arg.HashedPassword)
 	var i CreateUserRow
 	err := row.Scan(
 		&i.ID,

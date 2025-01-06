@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/sam-maton/htmx-todo/internal/auth"
 	"github.com/sam-maton/htmx-todo/internal/database"
@@ -18,14 +17,12 @@ func (config serverConfig) signupHandler(w http.ResponseWriter, r *http.Request)
 
 	// check if passwords match
 
-	hashed, _ := auth.HashPassword(password)
-
-	// create uuid
+	hashedPW, _ := auth.HashPassword(password)
 
 	userParams := database.CreateUserParams{
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		Email:          email,
+		HashedPassword: hashedPW,
 	}
 
-	user, _ := config.db.CreateUser(r.Context(), userParams)
+	config.db.CreateUser(r.Context(), userParams)
 }
