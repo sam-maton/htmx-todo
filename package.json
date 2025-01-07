@@ -1,0 +1,24 @@
+{
+  "name": "htmx-todo",
+  "version": "1.0.0",
+  "description": "Playing around with GO + HTMX",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sam-maton/htmx-todo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sam-maton/htmx-todo/issues"
+  },
+  "homepage": "https://github.com/sam-maton/htmx-todo#readme",
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "prettier-plugin-go-template": "^0.0.15"
+  }
+}
