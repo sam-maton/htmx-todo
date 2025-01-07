@@ -9,7 +9,6 @@ import (
 )
 
 type CustomClaims struct {
-	Username string `json:"username"`
 	jwt.RegisteredClaims
 }
 
@@ -25,9 +24,8 @@ func CheckPasswordHash(password, hash string) error {
 	return err
 }
 
-func MakeJWT(userID uuid.UUID, username, tokenSecret string) (string, error) {
+func MakeJWT(userID uuid.UUID, tokenSecret string) (string, error) {
 	claims := CustomClaims{
-		username,
 		jwt.RegisteredClaims{
 			Issuer:    "htmxTodos",
 			IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),

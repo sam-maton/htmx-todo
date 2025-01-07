@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/sam-maton/htmx-todo/internal/auth"
 	"github.com/sam-maton/htmx-todo/internal/database"
@@ -30,12 +31,23 @@ func (config serverConfig) signupHandler(w http.ResponseWriter, r *http.Request)
 		HashedPassword: hashedPW,
 	}
 
-	_, err = config.db.CreateUser(r.Context(), userParams)
+	user, err := config.db.CreateUser(r.Context(), userParams)
 	if err != nil {
 		sendErrorToast(w, "There was an error with the sign up.")
 		log.Println(err)
 		return
 	}
+
+	token, _ := auth.MakeJWT(user.ID, config.jwtSecret)
+
+	cookie := http.Cookie{
+		Path:    "/",
+		Name:    "htmx-auth",
+		Value:   token,
+		Expires: time.Now().Add(365 * 24 * time.Hour),
+	}
+
+	http.SetCookie(w, &cookie)
 
 	w.Header().Add("Hx-Redirect", "/")
 }

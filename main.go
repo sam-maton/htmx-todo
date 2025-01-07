@@ -23,7 +23,16 @@ func main() {
 			return
 		}
 
-		err := applyMainLayout(w, r, "index.html")
+		cookie, err := r.Cookie("htmx-auth")
+
+		if err != nil {
+			http.Redirect(w, r, "/signup", http.StatusFound)
+			return
+		}
+
+		fmt.Println(cookie)
+
+		err = applyMainLayout(w, r, "index.html")
 		if err != nil {
 			fmt.Println(err)
 		}
