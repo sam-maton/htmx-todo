@@ -7,3 +7,8 @@ RETURNING id, created_at, updated_at, email;
 SELECT id, created_at, updated_at, email, hashed_password
 FROM users
 WHERE email = $1;
+
+-- name: GetUserById :one
+SELECT id, created_at, updated_at, email, hashed_password
+FROM users
+WHERE id = $1;

@@ -45,7 +45,7 @@ func (config serverConfig) signupHandler(w http.ResponseWriter, r *http.Request)
 		Path:    "/",
 		Name:    config.cookieTokenKey,
 		Value:   token,
-		Expires: time.Now().Add(365 * 24 * time.Hour),
+		Expires: time.Now().Add(time.Hour * 24),
 	}
 
 	http.SetCookie(w, &cookie)
@@ -78,12 +78,31 @@ func (config serverConfig) loginHandler(w http.ResponseWriter, r *http.Request) 
 		Path:    "/",
 		Name:    config.cookieTokenKey,
 		Value:   token,
-		Expires: time.Now().Add(365 * 24 * time.Hour),
+		Expires: time.Now().Add(time.Hour * 24),
 	}
 
 	http.SetCookie(w, &cookie)
 
 	w.Header().Add("Hx-Redirect", "/")
+}
+
+func (config serverConfig) logoutHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie(config.cookieTokenKey)
+	if err != nil {
+		log.Println("Redirecting to login page")
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
+
+	deleteCookie := http.Cookie{
+		Path:   "/",
+		Name:   cookie.Name,
+		MaxAge: -1,
+	}
+
+	log.Println("Redirecting to login page")
+	http.SetCookie(w, &deleteCookie)
+	http.Redirect(w, r, "/login", http.StatusFound)
 }
 
 func validatePasswordHandler(w http.ResponseWriter, r *http.Request) {

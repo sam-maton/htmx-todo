@@ -7,18 +7,23 @@ import (
 	"net/http"
 )
 
-func applyMainLayout(w http.ResponseWriter, r *http.Request, content string) error {
+type MainLayout struct {
+	IsAuthenticated bool
+	ContentData     interface{}
+}
 
-	path := r.URL.Path
+func (config *serverConfig) applyMainLayout(w http.ResponseWriter, r *http.Request, content string) error {
+
+	_, cookieErr := r.Cookie(config.cookieTokenKey)
 
 	tmpl, err := template.New("").ParseFiles(content, "./views/layouts/main-layout.html")
 	if err != nil {
 		return fmt.Errorf("there was an error parsing the templates: %w", err)
 	}
 
-	err = tmpl.ExecuteTemplate(w, "main-layout", path)
+	err = tmpl.ExecuteTemplate(w, "main-layout", cookieErr == nil)
 	if err != nil {
-		return fmt.Errorf("there was an error exectuing the temolate: %w", err)
+		return fmt.Errorf("there was an error exectuing the template: %w", err)
 	}
 
 	return nil

@@ -1,22 +1,39 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+	"time"
+
+	"github.com/sam-maton/htmx-todo/internal/auth"
 )
 
-func (cfg serverConfig) middlewareAuth(handler func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
+func (config serverConfig) middlewareAuth(handler func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie(cfg.cookieTokenKey)
 
+		cookie, err := r.Cookie(config.cookieTokenKey)
 		if err != nil {
 			log.Println("Redirecting to login page")
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
 
-		fmt.Println(cookie)
+		userID, err := auth.ValidateJWT(cookie.Value, config.jwtSecret)
+		if err != nil {
+			log.Println("Redirecting to login page")
+			http.Redirect(w, r, "/login", http.StatusFound)
+			return
+		}
+
+		_, err = config.db.GetUserById(r.Context(), userID)
+		if err != nil {
+			log.Println("Redirecting to login page")
+			cookie.MaxAge = -1
+			cookie.Expires = time.Now()
+			http.SetCookie(w, cookie)
+			http.Redirect(w, r, "/login", http.StatusFound)
+			return
+		}
 
 		handler(w, r)
 	}
