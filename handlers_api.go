@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -44,7 +43,7 @@ func (config serverConfig) signupHandler(w http.ResponseWriter, r *http.Request)
 
 	cookie := http.Cookie{
 		Path:    "/",
-		Name:    "htmx-auth",
+		Name:    config.cookieTokenKey,
 		Value:   token,
 		Expires: time.Now().Add(365 * 24 * time.Hour),
 	}
@@ -58,8 +57,33 @@ func (config serverConfig) loginHandler(w http.ResponseWriter, r *http.Request) 
 	email := r.FormValue("login-email")
 	password := r.FormValue("login-password")
 
-	fmt.Println(email)
-	fmt.Println(password)
+	user, err := config.db.GetUserByEmail(r.Context(), email)
+
+	if err != nil {
+		sendErrorToast(w, "No user with that email exists.")
+		log.Println(err)
+		return
+	}
+
+	err = auth.CheckPasswordHash(password, user.HashedPassword)
+	if err != nil {
+		sendErrorToast(w, "The password is incorrect.")
+		log.Println(err)
+		return
+	}
+
+	token, _ := auth.MakeJWT(user.ID, config.jwtSecret)
+
+	cookie := http.Cookie{
+		Path:    "/",
+		Name:    config.cookieTokenKey,
+		Value:   token,
+		Expires: time.Now().Add(365 * 24 * time.Hour),
+	}
+
+	http.SetCookie(w, &cookie)
+
+	w.Header().Add("Hx-Redirect", "/")
 }
 
 func validatePasswordHandler(w http.ResponseWriter, r *http.Request) {

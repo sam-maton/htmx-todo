@@ -15,15 +15,16 @@ func main() {
 	styles := http.FileServer(http.Dir("./views/stylesheets"))
 	mux.Handle("/styles/", http.StripPrefix("/styles/", styles))
 
-	mux.HandleFunc("/", homePageHandler)
-
+	// PAGES
+	mux.HandleFunc("/", config.middlewareAuth(homePageHandler))
 	mux.HandleFunc("/login", loginPageHandler)
-
 	mux.HandleFunc("/signup", signupPageHandler)
 
+	// API AUTH
 	mux.HandleFunc("POST /api/login", config.loginHandler)
 	mux.HandleFunc("POST /api/users", config.signupHandler)
 
+	// API VALIDATION
 	mux.HandleFunc("POST /api/validate-password", validatePasswordHandler)
 
 	log.Println("Serving app on http://localhost:4321/")

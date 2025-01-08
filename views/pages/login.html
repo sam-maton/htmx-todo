@@ -1,7 +1,11 @@
 {{ define "content" }}
   <div class="login-page">
     <h2>Login</h2>
-    <form action="/api/login" method="post">
+    <form
+      hx-post="/api/login"
+      hx-target="#main-toast-container"
+      hx-swap="innerHTML"
+    >
       <div class="mb-3">
         <label class="form-label" for="login-email">Email:</label>
         <input

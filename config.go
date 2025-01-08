@@ -10,14 +10,16 @@ import (
 )
 
 type serverConfig struct {
-	db        *database.Queries
-	jwtSecret string
+	db             *database.Queries
+	jwtSecret      string
+	cookieTokenKey string
 }
 
 func setupServerConfig() serverConfig {
 	godotenv.Load()
 	dbURL := os.Getenv("DB_URL")
 	secret := os.Getenv("SECRET")
+	cookieKey := os.Getenv("COOKIE_TOKEN_KEY")
 
 	if dbURL == "" {
 		log.Fatal("DB_URL environment variable must be set")
@@ -25,6 +27,10 @@ func setupServerConfig() serverConfig {
 
 	if secret == "" {
 		log.Fatal("SECRET environment variable must be set")
+	}
+
+	if cookieKey == "" {
+		log.Fatal("COOKIE_TOKEN_KEY environment variable must be set")
 	}
 
 	db, err := sql.Open("postgres", dbURL)
@@ -37,7 +43,8 @@ func setupServerConfig() serverConfig {
 	dbQueries := database.New(db)
 
 	return serverConfig{
-		db:        dbQueries,
-		jwtSecret: secret,
+		db:             dbQueries,
+		jwtSecret:      secret,
+		cookieTokenKey: cookieKey,
 	}
 }
