@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"time"
@@ -50,4 +52,35 @@ func (config serverConfig) signupHandler(w http.ResponseWriter, r *http.Request)
 	http.SetCookie(w, &cookie)
 
 	w.Header().Add("Hx-Redirect", "/")
+}
+
+func (config serverConfig) loginHandler(w http.ResponseWriter, r *http.Request) {
+	email := r.FormValue("login-email")
+	password := r.FormValue("login-password")
+
+	fmt.Println(email)
+	fmt.Println(password)
+}
+
+func validatePasswordHandler(w http.ResponseWriter, r *http.Request) {
+	password := r.FormValue("signup-password")
+	confirm := r.FormValue("signup-password-confirm")
+
+	type responseStruct struct {
+		Value     string
+		IsInvalid bool
+	}
+
+	data := responseStruct{
+		Value:     confirm,
+		IsInvalid: password != confirm,
+	}
+
+	view, err := template.ParseFiles("./views/components/confirm-password.html")
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	view.Execute(w, data)
 }
