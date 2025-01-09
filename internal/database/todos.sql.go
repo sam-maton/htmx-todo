@@ -7,47 +7,38 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
 )
 
 const createTodo = `-- name: CreateTodo :one
-INSERT INTO todos(id, created_at, updated_at, user_id, description, title, completed)
-VALUES (gen_random_uuid(), NOW(), NOW(), $1, $2, $3, $4)
-RETURNING id, created_at, updated_at, description, title, completed
+INSERT INTO todos(id, created_at, updated_at, user_id, title, completed)
+VALUES (gen_random_uuid(), NOW(), NOW(), $1, $2, $3)
+RETURNING id, created_at, updated_at, title, completed
 `
 
 type CreateTodoParams struct {
-	UserID      uuid.UUID      `json:"user_id"`
-	Description sql.NullString `json:"description"`
-	Title       string         `json:"title"`
-	Completed   bool           `json:"completed"`
+	UserID    uuid.UUID `json:"user_id"`
+	Title     string    `json:"title"`
+	Completed bool      `json:"completed"`
 }
 
 type CreateTodoRow struct {
-	ID          uuid.UUID      `json:"id"`
-	CreatedAt   time.Time      `json:"created_at"`
-	UpdatedAt   time.Time      `json:"updated_at"`
-	Description sql.NullString `json:"description"`
-	Title       string         `json:"title"`
-	Completed   bool           `json:"completed"`
+	ID        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Title     string    `json:"title"`
+	Completed bool      `json:"completed"`
 }
 
 func (q *Queries) CreateTodo(ctx context.Context, arg CreateTodoParams) (CreateTodoRow, error) {
-	row := q.db.QueryRowContext(ctx, createTodo,
-		arg.UserID,
-		arg.Description,
-		arg.Title,
-		arg.Completed,
-	)
+	row := q.db.QueryRowContext(ctx, createTodo, arg.UserID, arg.Title, arg.Completed)
 	var i CreateTodoRow
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.Description,
 		&i.Title,
 		&i.Completed,
 	)
@@ -55,18 +46,17 @@ func (q *Queries) CreateTodo(ctx context.Context, arg CreateTodoParams) (CreateT
 }
 
 const getTodosByUserId = `-- name: GetTodosByUserId :many
-SELECT id, created_at, updated_at, description, title, completed
+SELECT id, created_at, updated_at, title, completed
 FROM todos
 WHERE user_id = $1
 `
 
 type GetTodosByUserIdRow struct {
-	ID          uuid.UUID      `json:"id"`
-	CreatedAt   time.Time      `json:"created_at"`
-	UpdatedAt   time.Time      `json:"updated_at"`
-	Description sql.NullString `json:"description"`
-	Title       string         `json:"title"`
-	Completed   bool           `json:"completed"`
+	ID        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Title     string    `json:"title"`
+	Completed bool      `json:"completed"`
 }
 
 func (q *Queries) GetTodosByUserId(ctx context.Context, userID uuid.UUID) ([]GetTodosByUserIdRow, error) {
@@ -82,7 +72,6 @@ func (q *Queries) GetTodosByUserId(ctx context.Context, userID uuid.UUID) ([]Get
 			&i.ID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.Description,
 			&i.Title,
 			&i.Completed,
 		); err != nil {

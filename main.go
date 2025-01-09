@@ -7,24 +7,26 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var Config = setupServerConfig()
-
 func main() {
 
 	mux := http.NewServeMux()
+	config := setupServerConfig()
 
 	styles := http.FileServer(http.Dir("./views/stylesheets"))
 	mux.Handle("/styles/", http.StripPrefix("/styles/", styles))
 
 	// PAGES
-	mux.HandleFunc("/", Config.middlewareAuth(homePageHandler))
-	mux.HandleFunc("/login", loginPageHandler)
-	mux.HandleFunc("/signup", signupPageHandler)
+	mux.HandleFunc("/", config.middlewareAuth(config.homePageHandler))
+	mux.HandleFunc("/login", config.loginPageHandler)
+	mux.HandleFunc("/signup", config.signupPageHandler)
 
 	// API AUTH
-	mux.HandleFunc("POST /api/login", Config.loginHandler)
-	mux.HandleFunc("POST /api/users", Config.signupHandler)
-	mux.HandleFunc("GET /api/logout", Config.logoutHandler)
+	mux.HandleFunc("POST /api/login", config.loginHandler)
+	mux.HandleFunc("POST /api/signup", config.signupHandler)
+	mux.HandleFunc("GET /api/logout", config.logoutHandler)
+
+	// API TODOS
+	mux.HandleFunc("POST /api/todos", config.middlewareAuth(config.createTodoHandler))
 
 	// API VALIDATION
 	mux.HandleFunc("POST /api/validate-password", validatePasswordHandler)

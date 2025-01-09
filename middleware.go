@@ -5,10 +5,11 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/sam-maton/htmx-todo/internal/auth"
 )
 
-func (config serverConfig) middlewareAuth(handler func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
+func (config serverConfig) middlewareAuth(handler func(http.ResponseWriter, *http.Request, uuid.UUID)) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		cookie, err := r.Cookie(config.cookieTokenKey)
@@ -35,6 +36,6 @@ func (config serverConfig) middlewareAuth(handler func(http.ResponseWriter, *htt
 			return
 		}
 
-		handler(w, r)
+		handler(w, r, userID)
 	}
 }

@@ -1,0 +1,26 @@
+{{ define "content" }}
+  <form
+    class="row justify-content-center mt-4"
+    hx-post="/api/todos"
+    hx-target="#todos-container"
+    hx-swap="beforeend"
+  >
+    <div class="col-4">
+      <input
+        type="text"
+        name="new-todo-title"
+        class="form-control"
+        placeholder="Todo title"
+        aria-label="Todo title"
+      />
+    </div>
+    <div class="col-2">
+      <button type="submit" class="btn btn-primary">Add</button>
+    </div>
+  </form>
+  <div id="todos-container">
+    {{ range .Todos }}
+      <h1>{{ .Title }}</h1>
+    {{ end }}
+  </div>
+{{ end }}

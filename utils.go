@@ -46,5 +46,8 @@ func sendErrorToast(w http.ResponseWriter, message string) {
 		log.Println(err)
 	}
 
+	// w.WriteHeader(http.StatusInternalServerError)
+	w.Header().Add("HX-Retarget", "#main-toast-container")
+	w.Header().Add("HX-Reswap", "innerHTML")
 	view.Execute(w, errorParams{ErrorMessage: message})
 }

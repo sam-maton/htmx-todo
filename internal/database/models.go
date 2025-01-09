@@ -5,20 +5,18 @@
 package database
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
 )
 
 type Todo struct {
-	ID          uuid.UUID      `json:"id"`
-	CreatedAt   time.Time      `json:"created_at"`
-	UpdatedAt   time.Time      `json:"updated_at"`
-	Title       string         `json:"title"`
-	Completed   bool           `json:"completed"`
-	Description sql.NullString `json:"description"`
-	UserID      uuid.UUID      `json:"user_id"`
+	ID        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Title     string    `json:"title"`
+	Completed bool      `json:"completed"`
+	UserID    uuid.UUID `json:"user_id"`
 }
 
 type User struct {

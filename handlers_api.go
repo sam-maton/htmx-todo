@@ -6,10 +6,12 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/sam-maton/htmx-todo/internal/auth"
 	"github.com/sam-maton/htmx-todo/internal/database"
 )
 
+// AUTH HANDLERS
 func (config serverConfig) signupHandler(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("signup-email")
 	password := r.FormValue("signup-password")
@@ -105,6 +107,32 @@ func (config serverConfig) logoutHandler(w http.ResponseWriter, r *http.Request)
 	http.Redirect(w, r, "/login", http.StatusFound)
 }
 
+// TODO HANDLERS
+func (config serverConfig) createTodoHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
+	title := r.FormValue("new-todo-title")
+	params := database.CreateTodoParams{
+		UserID:    uuid.New(),
+		Title:     title,
+		Completed: false,
+	}
+
+	newTodo, err := config.db.CreateTodo(r.Context(), params)
+	if err != nil {
+		sendErrorToast(w, "There was an error creating the Todo.")
+		return
+	}
+
+	view, err := template.ParseFiles("./views/components/todo-item.html")
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	view.Execute(w, struct{ Title string }{Title: newTodo.Title})
+
+}
+
+// VALIDATION HANDLERS
 func validatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("signup-password")
 	confirm := r.FormValue("signup-password-confirm")
