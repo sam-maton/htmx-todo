@@ -7,12 +7,12 @@ import (
 	"net/http"
 )
 
-type MainLayout struct {
+type MainLayoutData struct {
 	IsAuthenticated bool
 	ContentData     interface{}
 }
 
-func (config *serverConfig) applyMainLayout(w http.ResponseWriter, r *http.Request, content string) error {
+func (config *serverConfig) applyMainLayout(w http.ResponseWriter, r *http.Request, content string, contentData interface{}) error {
 
 	_, cookieErr := r.Cookie(config.cookieTokenKey)
 
@@ -21,7 +21,12 @@ func (config *serverConfig) applyMainLayout(w http.ResponseWriter, r *http.Reque
 		return fmt.Errorf("there was an error parsing the templates: %w", err)
 	}
 
-	err = tmpl.ExecuteTemplate(w, "main-layout", cookieErr == nil)
+	data := MainLayoutData{
+		IsAuthenticated: cookieErr == nil,
+		ContentData:     contentData,
+	}
+
+	err = tmpl.ExecuteTemplate(w, "main-layout", data)
 	if err != nil {
 		return fmt.Errorf("there was an error exectuing the template: %w", err)
 	}

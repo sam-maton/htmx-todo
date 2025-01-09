@@ -11,7 +11,7 @@ func homePageHandler(w http.ResponseWriter, r *http.Request) {
 	// 	return
 	// }
 
-	err := Config.applyMainLayout(w, r, "index.html")
+	err := Config.applyMainLayout(w, r, "index.html", nil)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -19,7 +19,7 @@ func homePageHandler(w http.ResponseWriter, r *http.Request) {
 
 func loginPageHandler(w http.ResponseWriter, r *http.Request) {
 
-	err := Config.applyMainLayout(w, r, "./views/pages/login.html")
+	err := Config.applyMainLayout(w, r, "./views/pages/login.html", nil)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -27,7 +27,7 @@ func loginPageHandler(w http.ResponseWriter, r *http.Request) {
 
 func signupPageHandler(w http.ResponseWriter, r *http.Request) {
 
-	err := Config.applyMainLayout(w, r, "./views/pages/sign-up.html")
+	err := Config.applyMainLayout(w, r, "./views/pages/sign-up.html", nil)
 	if err != nil {
 		fmt.Println(err)
 	}

@@ -20,7 +20,7 @@
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
           <a class="navbar-brand" href="/">Todos</a>
-          {{if .}}
+          {{if .IsAuthenticated}}
           <a class="btn btn-primary" href="/api/logout" role="button">Logout</a>
           {{end}}
         </div>
@@ -30,7 +30,7 @@
     </div>
     <div class="container-xxl mx-auto" >
       </div>
-      {{template "content" .}}
+      {{template "content" .ContentData}}
     </div>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
