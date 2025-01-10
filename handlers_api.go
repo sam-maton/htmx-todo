@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -130,6 +131,11 @@ func (config serverConfig) createTodoHandler(w http.ResponseWriter, r *http.Requ
 
 	view.Execute(w, struct{ Title string }{Title: newTodo.Title})
 
+}
+
+func (config serverConfig) deleteTodoHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
+	pathID := r.PathValue("id")
+	fmt.Println("Deleting todo " + pathID)
 }
 
 // VALIDATION HANDLERS

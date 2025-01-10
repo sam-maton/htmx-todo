@@ -24,7 +24,7 @@
     hx-confirm="Are you sure?"
   >
     {{ range $index, $value := .Todos }}
-      <li class="list-group-item d-flex gap-5">
+      <li class="list-group-item d-flex gap-5" hx-target="this">
         <div>
           <input
             class="form-check-input me-1"
@@ -39,7 +39,7 @@
         <button
           type="button"
           class="btn btn-danger"
-          hx-delete="/todos/{{ $value.ID }}"
+          hx-delete="/api/todos/{{ $value.ID }}"
         >
           Delete
         </button>
