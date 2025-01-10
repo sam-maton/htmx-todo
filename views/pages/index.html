@@ -18,7 +18,11 @@
       <button type="submit" class="btn btn-primary">Add</button>
     </div>
   </form>
-  <ul id="todos-container" class="d-flex flex-column gap-3">
+  <ul
+    id="todos-container"
+    class="d-flex flex-column gap-3"
+    hx-confirm="Are you sure?"
+  >
     {{ range $index, $value := .Todos }}
       <li class="list-group-item d-flex gap-5">
         <div>
@@ -26,13 +30,19 @@
             class="form-check-input me-1"
             type="checkbox"
             value="{{ $value.Completed }}"
-            id="checkbox--{{ $index }}"
+            id="checkbox--{{ $value.ID }}"
           />
-          <label class="form-check-label" for="checkbox--{{ $index }}"
+          <label class="form-check-label" for="checkbox--{{ $value.ID }}"
             >{{ $value.Title }}</label
           >
         </div>
-        <button type="button" class="btn btn-danger">Delete</button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          hx-delete="/todos/{{ $value.ID }}"
+        >
+          Delete
+        </button>
       </li>
     {{ end }}
   </ul>
