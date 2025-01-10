@@ -20,6 +20,7 @@
 # Go workspace file
 go.work
 go.work.sum
+htmx-todo
 
 # env file
 .env

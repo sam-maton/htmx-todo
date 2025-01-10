@@ -111,7 +111,7 @@ func (config serverConfig) logoutHandler(w http.ResponseWriter, r *http.Request)
 func (config serverConfig) createTodoHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	title := r.FormValue("new-todo-title")
 	params := database.CreateTodoParams{
-		UserID:    uuid.New(),
+		UserID:    userID,
 		Title:     title,
 		Completed: false,
 	}

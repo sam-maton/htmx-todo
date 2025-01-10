@@ -18,9 +18,22 @@
       <button type="submit" class="btn btn-primary">Add</button>
     </div>
   </form>
-  <div id="todos-container">
-    {{ range .Todos }}
-      <h1>{{ .Title }}</h1>
+  <ul id="todos-container" class="d-flex flex-column gap-3">
+    {{ range $index, $value := .Todos }}
+      <li class="list-group-item d-flex gap-5">
+        <div>
+          <input
+            class="form-check-input me-1"
+            type="checkbox"
+            value="{{ $value.Completed }}"
+            id="checkbox--{{ $index }}"
+          />
+          <label class="form-check-label" for="checkbox--{{ $index }}"
+            >{{ $value.Title }}</label
+          >
+        </div>
+        <button type="button" class="btn btn-danger">Delete</button>
+      </li>
     {{ end }}
-  </div>
+  </ul>
 {{ end }}
