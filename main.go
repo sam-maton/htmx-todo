@@ -28,6 +28,7 @@ func main() {
 	// API TODOS
 	mux.HandleFunc("POST /api/todos", config.middlewareAuth(config.createTodoHandler))
 	mux.HandleFunc("DELETE /api/todos/{id}", config.middlewareAuth(config.deleteTodoHandler))
+	mux.HandleFunc("PUT /api/todos/{id}", config.middlewareAuth(config.completedTodoHandler))
 
 	// API VALIDATION
 	mux.HandleFunc("POST /api/validate-password", validatePasswordHandler)

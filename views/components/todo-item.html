@@ -1,1 +1,11 @@
-<h1>{{ .Title }}</h1>
+<input
+  class="form-check-input me-1"
+  type="checkbox"
+  value="{{ .Completed }}"
+  checked="{{ .Completed }}"
+  id="checkbox--{{ .ID }}"
+  hx-put="/api/todos/{{ .ID }}"
+  hx-swap="innerHTML"
+  name="todo-completed"
+/>
+<label class="form-check-label" for="checkbox--{{ .ID }}">{{ .Title }}</label>

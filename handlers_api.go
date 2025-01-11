@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -136,6 +137,47 @@ func (config serverConfig) createTodoHandler(w http.ResponseWriter, r *http.Requ
 func (config serverConfig) deleteTodoHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	pathID := r.PathValue("id")
 	fmt.Println("Deleting todo " + pathID)
+}
+
+func (config serverConfig) completedTodoHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
+	todoID := r.PathValue("id")
+	todoUUID, _ := uuid.Parse(todoID)
+
+	todo, _ := config.db.GetTodoById(r.Context(), todoUUID)
+
+	if todo.UserID != userID {
+		sendErrorToast(w, "You do not have permissions to update this todo item.")
+		return
+	}
+
+	checkedFormVal := r.FormValue("todo-completed")
+	fmt.Println(checkedFormVal)
+
+	checked, err := strconv.ParseBool(checkedFormVal)
+	if err != nil {
+		sendErrorToast(w, "An incorrect value was given.")
+		return
+	}
+
+	params := database.SetTodoCompletedParams{
+		ID:        todoUUID,
+		Completed: !checked,
+	}
+
+	updatedTodo, err := config.db.SetTodoCompleted(r.Context(), params)
+	if err != nil {
+		sendErrorToast(w, "An incorrect value was given.")
+		return
+	}
+
+	view, err := template.ParseFiles("./views/components/todo-item.html")
+	if err != nil {
+		sendErrorToast(w, "There was an error returning the new Todo. Please refresh the page.")
+		return
+	}
+
+	view.Execute(w, updatedTodo)
+
 }
 
 // VALIDATION HANDLERS

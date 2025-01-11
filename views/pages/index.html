@@ -18,28 +18,29 @@
       <button type="submit" class="btn btn-primary">Add</button>
     </div>
   </form>
-  <ul
-    id="todos-container"
-    class="d-flex flex-column gap-3"
-    hx-confirm="Are you sure?"
-  >
-    {{ range $index, $value := .Todos }}
+  <ul id="todos-container" class="d-flex flex-column gap-3">
+    {{ range .Todos }}
       <li class="list-group-item d-flex gap-5" hx-target="this">
-        <div>
+        <div hx-target="this">
           <input
             class="form-check-input me-1"
             type="checkbox"
-            value="{{ $value.Completed }}"
-            id="checkbox--{{ $value.ID }}"
+            value="{{ .Completed }}"
+            checked="{{ .Completed }}"
+            id="checkbox--{{ .ID }}"
+            hx-put="/api/todos/{{ .ID }}"
+            hx-swap="innerHTML"
+            name="todo-completed"
           />
-          <label class="form-check-label" for="checkbox--{{ $value.ID }}"
-            >{{ $value.Title }}</label
+          <label class="form-check-label" for="checkbox--{{ .ID }}"
+            >{{ .Title }}</label
           >
         </div>
         <button
           type="button"
           class="btn btn-danger"
-          hx-delete="/api/todos/{{ $value.ID }}"
+          hx-confirm="Are you sure?"
+          hx-delete="/api/todos/{{ .ID }}"
         >
           Delete
         </button>

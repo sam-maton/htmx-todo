@@ -45,6 +45,26 @@ func (q *Queries) CreateTodo(ctx context.Context, arg CreateTodoParams) (CreateT
 	return i, err
 }
 
+const getTodoById = `-- name: GetTodoById :one
+SELECT id, created_at, updated_at, title, completed, user_id
+FROM todos
+WHERE id = $1
+`
+
+func (q *Queries) GetTodoById(ctx context.Context, id uuid.UUID) (Todo, error) {
+	row := q.db.QueryRowContext(ctx, getTodoById, id)
+	var i Todo
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Title,
+		&i.Completed,
+		&i.UserID,
+	)
+	return i, err
+}
+
 const getTodosByUserId = `-- name: GetTodosByUserId :many
 SELECT id, created_at, updated_at, title, completed
 FROM todos
@@ -86,4 +106,36 @@ func (q *Queries) GetTodosByUserId(ctx context.Context, userID uuid.UUID) ([]Get
 		return nil, err
 	}
 	return items, nil
+}
+
+const setTodoCompleted = `-- name: SetTodoCompleted :one
+UPDATE todos SET completed = $2, updated_at = NOW()
+WHERE id = $1
+RETURNING id, created_at, updated_at, title, completed
+`
+
+type SetTodoCompletedParams struct {
+	ID        uuid.UUID `json:"id"`
+	Completed bool      `json:"completed"`
+}
+
+type SetTodoCompletedRow struct {
+	ID        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Title     string    `json:"title"`
+	Completed bool      `json:"completed"`
+}
+
+func (q *Queries) SetTodoCompleted(ctx context.Context, arg SetTodoCompletedParams) (SetTodoCompletedRow, error) {
+	row := q.db.QueryRowContext(ctx, setTodoCompleted, arg.ID, arg.Completed)
+	var i SetTodoCompletedRow
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Title,
+		&i.Completed,
+	)
+	return i, err
 }
