@@ -5,7 +5,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -153,15 +152,15 @@ func (config serverConfig) completedTodoHandler(w http.ResponseWriter, r *http.R
 	checkedFormVal := r.FormValue("todo-completed")
 	fmt.Println(checkedFormVal)
 
-	checked, err := strconv.ParseBool(checkedFormVal)
-	if err != nil {
-		sendErrorToast(w, "An incorrect value was given.")
-		return
-	}
+	// checked, err := strconv.ParseBool(checkedFormVal)
+	// if err != nil {
+	// 	sendErrorToast(w, "An incorrect value was given.")
+	// 	return
+	// }
 
 	params := database.SetTodoCompletedParams{
 		ID:        todoUUID,
-		Completed: !checked,
+		Completed: (checkedFormVal != ""),
 	}
 
 	updatedTodo, err := config.db.SetTodoCompleted(r.Context(), params)

@@ -1,8 +1,8 @@
 <input
   class="form-check-input me-1"
   type="checkbox"
-  value="{{ .Completed }}"
-  checked="{{ .Completed }}"
+  value="{{ .Title }}"
+  {{ if .Completed }}checked{{ end }}
   id="checkbox--{{ .ID }}"
   hx-put="/api/todos/{{ .ID }}"
   hx-swap="innerHTML"
