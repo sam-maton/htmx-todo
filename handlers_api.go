@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -135,7 +134,12 @@ func (config serverConfig) createTodoHandler(w http.ResponseWriter, r *http.Requ
 
 func (config serverConfig) deleteTodoHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	pathID := r.PathValue("id")
-	fmt.Println("Deleting todo " + pathID)
+	deleteID, _ := uuid.Parse(pathID)
+
+	err := config.db.DeleteTodo(r.Context(), deleteID)
+	if err != nil {
+		sendErrorToast(w, "There was an error deleting the Todo")
+	}
 }
 
 func (config serverConfig) completedTodoHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
@@ -150,13 +154,6 @@ func (config serverConfig) completedTodoHandler(w http.ResponseWriter, r *http.R
 	}
 
 	checkedFormVal := r.FormValue("todo-completed")
-	fmt.Println(checkedFormVal)
-
-	// checked, err := strconv.ParseBool(checkedFormVal)
-	// if err != nil {
-	// 	sendErrorToast(w, "An incorrect value was given.")
-	// 	return
-	// }
 
 	params := database.SetTodoCompletedParams{
 		ID:        todoUUID,

@@ -45,6 +45,16 @@ func (q *Queries) CreateTodo(ctx context.Context, arg CreateTodoParams) (CreateT
 	return i, err
 }
 
+const deleteTodo = `-- name: DeleteTodo :exec
+DELETE FROM todos
+WHERE id = $1
+`
+
+func (q *Queries) DeleteTodo(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteTodo, id)
+	return err
+}
+
 const getTodoById = `-- name: GetTodoById :one
 SELECT id, created_at, updated_at, title, completed, user_id
 FROM todos
@@ -69,6 +79,7 @@ const getTodosByUserId = `-- name: GetTodosByUserId :many
 SELECT id, created_at, updated_at, title, completed
 FROM todos
 WHERE user_id = $1
+ORDER BY created_at DESC
 `
 
 type GetTodosByUserIdRow struct {
